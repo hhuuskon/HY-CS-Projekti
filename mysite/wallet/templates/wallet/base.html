@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bad Wallet</title>
+</head>
+<body>
+<h1>Bad Wallet</h1>
+{% if user.is_authenticated %}
+<form action="{% url 'wallet:logout' %}" method="post">
+  {% csrf_token %}
+  Logged in as {{ user.username }} <input type="submit" value="Logout">
+</form>
+{% endif %}
+{% if messages %}
+<ul>
+  {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+</ul>
+{% endif %}
+{% block content %}{% endblock %}
+</body>
+</html>
