@@ -1,0 +1,25 @@
+{% extends "wallet/base.html" %}
+{% block content %}
+<h2>{{ wallet.owner.username }}'s wallet</h2>
+<p>Address: {{ wallet.address }}</p>
+<p>Balance: {{ wallet.balance }} HYC</p>
+<p>Private key: {{ private_key }}</p>
+
+<h3>Send</h3>
+<form action="{% url 'wallet:send' wallet.id %}" method="post">
+  {% csrf_token %}
+  To address: <input type="text" name="address"><br>
+  Amount: <input type="text" name="amount"><br>
+  Note: <input type="text" name="note"><br>
+  <input type="submit" value="Send">
+</form>
+
+<h3>Transactions</h3>
+<ul>
+{% for t in transactions %}
+  <li>{{ t.date }}: {{ t.sender }} -> {{ t.receiver }}, {{ t.amount }} HYC ({{ t.note }})</li>
+{% empty %}
+  <li>No transactions.</li>
+{% endfor %}
+</ul>
+{% endblock %}

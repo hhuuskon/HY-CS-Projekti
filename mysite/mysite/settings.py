@@ -124,3 +124,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/wallet/login/'
+
+# used in the fix for flaw 2
+WALLET_KEY = 'q0bVqZ3cJ0m6x0z2lKXr0sWn3vC7E0wJ8fPjYyXhH1A='
