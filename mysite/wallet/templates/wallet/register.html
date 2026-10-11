@@ -1,0 +1,12 @@
+{% extends "wallet/base.html" %}
+{% block content %}
+<h2>Create wallet</h2>
+<p>Password must be at least 8 characters long, it can't be only numbers and it can't be a common password.</p>
+<form method="post">
+  {% csrf_token %}
+  Username: <input type="text" name="username"><br>
+  Password: <input type="password" name="password"><br>
+  <input type="submit" value="Register">
+</form>
+<p><a href="{% url 'wallet:login' %}">Back to login</a></p>
+{% endblock %}
