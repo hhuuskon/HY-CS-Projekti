@@ -127,3 +127,19 @@ LOGIN_URL = '/wallet/login/'
 
 # used in the fix for flaw 2
 WALLET_KEY = 'q0bVqZ3cJ0m6x0z2lKXr0sWn3vC7E0wJ8fPjYyXhH1A='
+
+LOGGING = {
+    'version': 1,
+    # FIX (flaw 5): add time and level to every log line
+    # 'formatters': {
+    #     'timestamp': {'format': '{asctime} {levelname} {message}', 'style': '{'},
+    # },
+    'handlers': {
+        'file': {'class': 'logging.FileHandler', 'filename': BASE_DIR / 'wallet.log'},
+        # FIX:
+        # 'file': {'class': 'logging.FileHandler', 'filename': BASE_DIR / 'wallet.log', 'formatter': 'timestamp'},
+    },
+    'loggers': {
+        'wallet': {'handlers': ['file'], 'level': 'INFO'},
+    },
+}

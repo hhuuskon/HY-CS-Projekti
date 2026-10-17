@@ -55,12 +55,12 @@ def login_view(request):
             # FLAW 5: log doesn't tell anything useful
             logger.error('error occurred')
             # FIX:
-            # logger.warning('failed login, username: %s, ip: %s', username, request.META.get('REMOTE_ADDR'))
+            # logger.warning('failed login, username: %s', username)
             messages.error(request, 'Wrong username or password')
             return render(request, 'wallet/login.html')
         login(request, user)
         # FIX: log successful logins too
-        # logger.info('login, username: %s, ip: %s', username, request.META.get('REMOTE_ADDR'))
+        # logger.info('login, username: %s', username)
         return redirect('wallet:index')
     return render(request, 'wallet/login.html')
 
