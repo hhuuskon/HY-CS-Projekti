@@ -1,0 +1,12 @@
+{% extends "wallet/base.html" %}
+{% block content %}
+<h2>Search: {{ q }}</h2>
+<table border="1">
+{% for row in results %}
+  <tr>{% for col in row %}<td>{{ col }}</td>{% endfor %}</tr>
+{% empty %}
+  <tr><td>Nothing found</td></tr>
+{% endfor %}
+</table>
+<p><a href="{% url 'wallet:detail' wallet.id %}">Back</a></p>
+{% endblock %}

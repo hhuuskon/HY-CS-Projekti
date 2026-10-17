@@ -10,4 +10,5 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('<int:wallet_id>/', views.detail, name='detail'),
     path('<int:wallet_id>/send/', views.send, name='send'),
+    path('<int:wallet_id>/search/', views.search, name='search'),
 ]

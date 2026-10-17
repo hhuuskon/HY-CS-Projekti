@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.db import connection
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -118,3 +119,23 @@ def send(request, wallet_id):
     messages.success(request, 'Sent!')
     return redirect('wallet:detail', wallet_id=wallet.id)
 
+
+@login_required
+def search(request, wallet_id):
+    wallet = get_object_or_404(Wallet, pk=wallet_id)
+    # FIX (flaw 1):
+    # wallet = get_object_or_404(Wallet, pk=wallet_id, owner=request.user)
+    q = request.GET.get('q', '')
+
+    # FLAW 3: sql injection, user input goes straight into the query
+    sql = ("SELECT t.id, s.address, r.address, t.amount, t.note, t.date FROM wallet_transaction t "
+           "JOIN wallet_wallet s ON t.sender_id = s.id JOIN wallet_wallet r ON t.receiver_id = r.id "
+           "WHERE (t.sender_id = %s OR t.receiver_id = %s) AND t.note LIKE '%%%s%%'" % (wallet.id, wallet.id, q))
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        results = cursor.fetchall()
+    # FIX: use the orm (it uses parameters)
+    # results = Transaction.objects.filter(Q(sender=wallet) | Q(receiver=wallet), note__contains=q) \
+    #     .values_list('id', 'sender__address', 'receiver__address', 'amount', 'note', 'date')
+
+    return render(request, 'wallet/search.html', {'wallet': wallet, 'q': q, 'results': results})
