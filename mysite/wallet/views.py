@@ -1,7 +1,9 @@
 import logging
 from decimal import Decimal, InvalidOperation
 
+from django.conf import settings
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -139,3 +141,14 @@ def search(request, wallet_id):
     #     .values_list('id', 'sender__address', 'receiver__address', 'amount', 'note', 'date')
 
     return render(request, 'wallet/search.html', {'wallet': wallet, 'q': q, 'results': results})
+
+
+@staff_member_required
+def logs(request):
+    # admin page for reading wallet.log
+    try:
+        with open(settings.LOGGING['handlers']['file']['filename']) as f:
+            lines = f.read().splitlines()
+    except FileNotFoundError:
+        lines = []
+    return render(request, 'wallet/logs.html', {'lines': lines})
