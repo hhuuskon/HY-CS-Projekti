@@ -10,6 +10,7 @@
   {% csrf_token %}
   Logged in as {{ user.username }} <input type="submit" value="Logout">
 </form>
+{% if user.is_staff %}<p><a href="{% url 'wallet:logs' %}">Admin: logs</a></p>{% endif %}
 {% endif %}
 {% if messages %}
 <ul>

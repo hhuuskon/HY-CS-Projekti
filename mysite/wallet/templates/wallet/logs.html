@@ -1,0 +1,10 @@
+{% extends "wallet/base.html" %}
+{% block content %}
+<h2>Admin: wallet.log</h2>
+{% if lines %}
+<pre>{% for line in lines %}{{ line }}
+{% endfor %}</pre>
+{% else %}
+<p>Log is empty.</p>
+{% endif %}
+{% endblock %}
