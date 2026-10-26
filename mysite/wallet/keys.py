@@ -16,11 +16,11 @@ def new_address():
 # FLAW 2: private keys are "encrypted" with base64 only
 def encrypt(key):
     return base64.b64encode(key.encode()).decode()
-    # FIX: use real encryption
+    # FIX 2: use real encryption
     # return Fernet(settings.WALLET_KEY).encrypt(key.encode()).decode()
 
 
 def decrypt(key):
     return base64.b64decode(key.encode()).decode()
-    # FIX:
+    # FIX 2:
     # return Fernet(settings.WALLET_KEY).decrypt(key.encode()).decode()

@@ -33,7 +33,7 @@ def register(request):
             return render(request, 'wallet/register.html')
 
         # FLAW 4: the page tells the user how a good password looks like but it is never checked
-        # FIX:
+        # FIX 4:
         # try:
         #     validate_password(password)
         # except ValidationError as e:
@@ -56,12 +56,12 @@ def login_view(request):
         if user is None:
             # FLAW 5: log doesn't tell anything useful
             logger.error('error occurred')
-            # FIX:
+            # FIX 5:
             # logger.warning('failed login, username: %s', username)
             messages.error(request, 'Wrong username or password')
             return render(request, 'wallet/login.html')
         login(request, user)
-        # FIX: log successful logins too
+        # FIX 5: log successful logins too
         # logger.info('login, username: %s', username)
         return redirect('wallet:index')
     return render(request, 'wallet/login.html')
@@ -77,7 +77,7 @@ def logout_view(request):
 def detail(request, wallet_id):
     # FLAW 1: anyone logged in can open any wallet by changing the id in the url
     wallet = get_object_or_404(Wallet, pk=wallet_id)
-    # FIX:
+    # FIX 1:
     # wallet = get_object_or_404(Wallet, pk=wallet_id, owner=request.user)
     transactions = Transaction.objects.filter(Q(sender=wallet) | Q(receiver=wallet)).order_by('-date')
     return render(request, 'wallet/detail.html', {
@@ -91,7 +91,7 @@ def detail(request, wallet_id):
 def send(request, wallet_id):
     # FLAW 1: same problem here, you can send money from other peoples wallets
     wallet = get_object_or_404(Wallet, pk=wallet_id)
-    # FIX:
+    # FIX 1:
     # wallet = get_object_or_404(Wallet, pk=wallet_id, owner=request.user)
     if request.method != 'POST':
         return redirect('wallet:detail', wallet_id=wallet.id)
@@ -99,14 +99,16 @@ def send(request, wallet_id):
         amount = Decimal(request.POST['amount'])
         receiver = Wallet.objects.get(address=request.POST['address'].strip())
     except (InvalidOperation, Wallet.DoesNotExist):
-        logger.error('error occurred')
-        # FIX:
+        logger.error('error occurred')  # FLAW 5
+        # FIX 5:
         # logger.warning('failed transfer, user: %s, wallet: %s', request.user.username, wallet.id)
         messages.error(request, 'Check amount and address')
         return redirect('wallet:detail', wallet_id=wallet.id)
 
     if amount <= 0 or amount > wallet.balance or receiver == wallet:
-        logger.error('error occurred')
+        logger.error('error occurred')  # FLAW 5
+        # FIX 5:
+        # logger.warning('failed transfer, user: %s, wallet: %s, amount: %s', request.user.username, wallet.id, amount)
         messages.error(request, 'Not possible')
         return redirect('wallet:detail', wallet_id=wallet.id)
 
@@ -115,7 +117,7 @@ def send(request, wallet_id):
     wallet.save()
     receiver.save()
     Transaction.objects.create(sender=wallet, receiver=receiver, amount=amount, note=request.POST.get('note', ''))
-    # FIX:
+    # FIX 5:
     # logger.info('transfer, user: %s, from: %s, to: %s, amount: %s', request.user.username,
     #             wallet.address, receiver.address, amount)
     messages.success(request, 'Sent!')
@@ -124,8 +126,8 @@ def send(request, wallet_id):
 
 @login_required
 def search(request, wallet_id):
-    wallet = get_object_or_404(Wallet, pk=wallet_id)
-    # FIX (flaw 1):
+    wallet = get_object_or_404(Wallet, pk=wallet_id)  # FLAW 1
+    # FIX 1:
     # wallet = get_object_or_404(Wallet, pk=wallet_id, owner=request.user)
     q = request.GET.get('q', '')
 
@@ -136,7 +138,7 @@ def search(request, wallet_id):
     with connection.cursor() as cursor:
         cursor.execute(sql)
         results = cursor.fetchall()
-    # FIX: use the orm (it uses parameters)
+    # FIX 3: use the orm (it uses parameters)
     # results = Transaction.objects.filter(Q(sender=wallet) | Q(receiver=wallet), note__contains=q) \
     #     .values_list('id', 'sender__address', 'receiver__address', 'amount', 'note', 'date')
 
