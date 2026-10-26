@@ -1,6 +1,6 @@
 # Bad Wallet
 
-A really bad crypto wallet made for the Cyber Security Base Course Project I.
+A really bad crypto wallet made for the [Cyber Security Base Course Project I](https://cybersecuritybase.mooc.fi/module-3.1).
 The coins (HYC) are not real, they are just numbers in the database.
 
 The app has five security flaws from the OWASP Top 10 2021 list on purpose.
@@ -33,4 +33,4 @@ The `migrate` command makes these users:
 
 ## Screenshots
 
-Screenshots of every flaw before and after the fix are in the `screenshots` folder.
+Screenshots of every flaw before and after the fix are in the [`screenshots`](screenshots/) folder.
